@@ -12,14 +12,9 @@ crate-type = ["cdylib"]
 
 [dependencies]
 worker = { workspace = true}
-maud = { workspace = true}
 cfg-if  = {workspace = true}
+maud = "0.25.0"
 tracing = "0.1"
 tracing-web = "0.1"
 tracing-subscriber = { version = "0.3", features=['time', 'json'] }
 time = { version = "0.3", features=['wasm-bindgen'] }
-
-[profile.release]
-lto = true
-strip = true
-codegen-units = 1

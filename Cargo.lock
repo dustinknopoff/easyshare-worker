@@ -131,7 +131,6 @@ dependencies = [
 name = "easyshare-cron"
 version = "0.1.0"
 dependencies = [
- "maud",
  "worker",
 ]
 

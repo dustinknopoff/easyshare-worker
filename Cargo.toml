@@ -6,7 +6,6 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
-maud = "0.25.0"
 worker = "0.0.18"
 cfg-if = "1"
 
