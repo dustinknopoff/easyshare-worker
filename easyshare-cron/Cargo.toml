@@ -12,3 +12,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 worker = { workspace = true}
+cfg-if = { workspace = true }
