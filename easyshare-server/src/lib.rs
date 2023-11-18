@@ -1,7 +1,12 @@
+use maud::html;
 use tracing_subscriber::fmt::{format::Pretty, time::UtcTime};
 use tracing_subscriber::prelude::*;
 use tracing_web::{performance_layer, MakeConsoleWriter};
+use uuid::Uuid;
 use worker::*;
+
+use crate::ui::layout;
+mod ui;
 mod utils;
 
 #[event(start)]
@@ -19,7 +24,10 @@ pub fn start() {
         .init();
 }
 
-#[event(fetch)]
+#[event(fetch, respond_with_errors)]
 async fn main(req: Request, env: Env, ctx: Context) -> Result<Response> {
-    Response::ok("Hello, World!")
+    tracing::info!(request=?req, "Handling request");
+    Response::from_html(
+        layout::layout("EasyShare", html!("Hello World "(Uuid::new_v4()))).into_string(),
+    )
 }
