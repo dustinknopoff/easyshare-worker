@@ -9,3 +9,9 @@ command = "cargo install -q worker-build && worker-build --release"
 binding = 'EASYSHARE_BUCKET'
 bucket_name = 'easyshare'
 preview_bucket_name = 'easyshare'
+
+[vars]
+WORKER_URL = "http://localhost:8787"
+
+[env.production.vars]
+WORKER_URL = "https://easyshare.knopoff.dev"
