@@ -1,4 +1,4 @@
-name = "easyshare-server"
+name = "easyshare"
 main = "build/worker/shim.mjs"
 compatibility_date = "2023-03-22"
 
@@ -15,4 +15,4 @@ WORKER_URL = "https://easyshare.knopoff.dev"
 EXPIRATION_TIME_HOURS = 24
 
 [triggers]
-crons = ["*/30 * * * *"]
+crons = []

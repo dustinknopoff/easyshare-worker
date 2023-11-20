@@ -1,14 +1,8 @@
 [workspace]
 members = [
     "easyshare-server",
-    "easyshare-cron",
 ]
 resolver = "2"
-
-[workspace.dependencies]
-worker = "0.0.18"
-cfg-if = "1"
-anyhow = "1"
 
 [profile.release]
 lto = true

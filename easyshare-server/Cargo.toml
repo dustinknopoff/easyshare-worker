@@ -22,7 +22,6 @@ time = { version = "0.3", features=['wasm-bindgen'] }
 http = "1.0.0"
 futures-util = "0.3"
 urlencoding = "2.1"
-chrono = "0.4"
 
 [dependencies.uuid]
 version = "1.5.0"
