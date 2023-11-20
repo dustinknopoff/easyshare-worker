@@ -6,6 +6,7 @@ use uuid::Uuid;
 use worker::*;
 
 use crate::ui::layout;
+use crate::ui::file_upload;
 mod ui;
 mod utils;
 
@@ -35,7 +36,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     router
         .get("/", |_, _| {
             Response::from_html(
-                layout::layout("EasyShare", html!("Hello World "(Uuid::new_v4()))).into_string(),
+                layout::layout("EasyShare", file_upload::form()).into_string(),
             )
         })
         .get_async("/obj/:key", |_req, ctx| async move {
