@@ -10,7 +10,6 @@ use crate::ui::layout;
 mod ui;
 mod utils;
 
-const WORKER_URL: &str = "http://localhost:8787";
 
 #[event(start)]
 pub fn start() {
@@ -40,6 +39,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         .post_async("/upload", |mut req, ctx| async move {
             let form_data = req.form_data().await?;
             let bucket = ctx.bucket("EASYSHARE_BUCKET")?;
+            let worker_url = ctx.var("WORKER_URL")?.to_string();
 
             let Some(files) = form_data.get_all("files") else {
                 return Response::error("No files uploaded", 404);
@@ -59,7 +59,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             Response::from_html(html!(
                 div {
                     p { "Success!"}
-                    a href={(WORKER_URL) "/share/" (prefix)} {
+                    a href={(worker_url) "/share/" (prefix)} {
                         "View Files"
                     }
                 }
@@ -94,6 +94,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             };
 
             let bucket = ctx.bucket("EASYSHARE_BUCKET")?;
+            let worker_url = ctx.var("WORKER_URL")?.to_string();
 
             let folder: Vec<Object> = bucket
                 .list()
@@ -114,7 +115,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                         ul {
                             @for object in folder {
                                 li {
-                                    a href={(WORKER_URL) "/obj/" (object.key())} {
+                                    a href={(worker_url) "/obj/" (object.key())} {
                                         "Download " (object.key())
                                     }
                                 }
