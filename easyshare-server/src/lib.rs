@@ -1,4 +1,3 @@
-use chrono::Duration;
 use maud::html;
 use tracing_subscriber::fmt::{format::Pretty, time::UtcTime};
 use tracing_subscriber::prelude::*;
@@ -129,25 +128,6 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         })
         .run(req, env)
         .await
-}
-
-#[event(scheduled)]
-async fn cron(_event: ScheduledEvent, env: Env, _ctx: ScheduleContext) {
-    cron_handler(env).await.unwrap()
-}
-
-async fn cron_handler(env: Env) -> Result<()> {
-    let bucket = env.bucket("EASYSHARE_BUCKET")?;
-    let expiration_in_hours = env.var("EXPIRATION_TIME_HOURS")?.to_string().parse::<i64>().unwrap_or(24);
-    let expiration_time_millis: u64 = (chrono::Utc::now() - Duration::hours(expiration_in_hours)).timestamp_millis().try_into().unwrap();
-
-    let objects = bucket.list().execute().await?.objects();
-    for object in objects {
-        if  object.uploaded().as_millis() < expiration_time_millis {
-            bucket.delete(object.key()).await?;
-        }
-    }
-    Ok(())
 }
 
 fn write_http_headers(mut headers: Headers, r2_metadata: HttpMetadata) -> Result<Headers> {
