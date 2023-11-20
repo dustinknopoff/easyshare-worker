@@ -27,6 +27,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.75"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
+
+[[package]]
 name = "async-trait"
 version = "0.1.74"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -145,7 +151,9 @@ dependencies = [
 name = "easyshare-server"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "cfg-if",
+ "http 1.0.0",
  "maud",
  "time",
  "tracing",
@@ -255,6 +263,17 @@ name = "http"
 version = "0.2.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f95b9abcae896730d42b78e09c155ed4ddf82c07b4de772c64aee5b2d8b7c150"
+dependencies = [
+ "bytes",
+ "fnv",
+ "itoa",
+]
+
+[[package]]
+name = "http"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b32afd38673a8016f7c9ae69e5af41a58f81b1d31689040f2f1959594ce194ea"
 dependencies = [
  "bytes",
  "fnv",
@@ -1022,7 +1041,7 @@ dependencies = [
  "chrono-tz",
  "futures-channel",
  "futures-util",
- "http",
+ "http 0.2.10",
  "js-sys",
  "matchit",
  "pin-project",
