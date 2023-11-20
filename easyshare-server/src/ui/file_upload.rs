@@ -4,7 +4,7 @@ use maud::{Markup, html, PreEscaped};
 pub fn form() -> Markup {
     html! {
         form id="form" hx-encoding="multipart/form-data" hx-post="/upload" {
-            input type="file" multiple name="file";
+            input type="file" multiple name="files" required;
             button { "Upload"}
             progress id="progress" value="0" max="100";
             (PreEscaped("<script>

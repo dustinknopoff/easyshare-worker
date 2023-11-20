@@ -20,6 +20,7 @@ pub fn layout(page_title: &str, children: Markup) -> Markup {
             }
             meta name="viewport" content="width=device-width, initial-scale=1.0";
             (styles())
+            script src="https://unpkg.com/htmx.org@1.9.8" {}
         }
         body {
             (children)
