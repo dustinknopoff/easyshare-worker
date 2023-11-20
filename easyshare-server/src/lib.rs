@@ -5,8 +5,8 @@ use tracing_web::{performance_layer, MakeConsoleWriter};
 use uuid::Uuid;
 use worker::*;
 
-use crate::ui::layout;
 use crate::ui::file_upload;
+use crate::ui::layout;
 mod ui;
 mod utils;
 
@@ -35,18 +35,47 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
 
     router
         .get("/", |_, _| {
-            Response::from_html(
-                layout::layout("EasyShare", file_upload::form()).into_string(),
-            )
+            Response::from_html(layout::layout("EasyShare", file_upload::form()).into_string())
         })
-        .get_async("/obj/:key", |_req, ctx| async move {
+        .post_async("/upload", |mut req, ctx| async move {
+            let form_data = req.form_data().await?;
+            let bucket = ctx.bucket("EASYSHARE_BUCKET")?;
+
+            let Some(files) = form_data.get_all("files") else {
+                return Response::error("No files uploaded", 404);
+            };
+
+            let prefix = Uuid::new_v4();
+
+            for file in files {
+                if let FormEntry::File(file) = file {
+                    bucket
+                        .put(format!("{}/{}", prefix, file.name()), file.bytes().await?)
+                        .execute()
+                        .await?;
+                };
+            }
+
+            Response::from_html(html!(
+                div {
+                    p { "Success!"}
+                    a href={(WORKER_URL) "/share/" (prefix)} {
+                        "View Files"
+                    }
+                }
+            ).into_string())
+        })
+        .get_async("/obj/:key/:file_name", |_req, ctx| async move {
             let Some(id) = ctx.param("key") else {
                 return Response::error("key required", 404);
+            };
+            let Some(file_name) = ctx.param("file_name") else {
+                return Response::error("file_name required", 404);
             };
 
             let bucket = ctx.bucket("EASYSHARE_BUCKET")?;
 
-            let Some(object) = bucket.get(id).execute().await? else {
+            let Some(object) = bucket.get(format!("{}/{}", urlencoding::decode(id).unwrap(), urlencoding::decode(file_name).unwrap())).execute().await? else {
                 return Response::error("No object found", 404);
             };
 
@@ -56,9 +85,8 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             headers.set("etag", &object.http_etag())?;
 
             Ok(Response::from_stream(object.body().unwrap().stream()?)?
-            .with_headers(headers)
-            .with_status(200))
-            
+                .with_headers(headers)
+                .with_status(200))
         })
         .get_async("/share/:id", |_req, ctx| async move {
             let Some(id) = ctx.param("id") else {
@@ -67,15 +95,12 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
 
             let bucket = ctx.bucket("EASYSHARE_BUCKET")?;
 
-            let folder: Vec<String> = bucket
+            let folder: Vec<Object> = bucket
                 .list()
                 .prefix(id)
                 .execute()
                 .await?
-                .objects()
-                .iter()
-                .map(|object| format!("{WORKER_URL}/obj/{}", object.key()))
-                .collect();
+                .objects();
 
             Response::from_html(
                 layout::layout(
@@ -89,7 +114,9 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                         ul {
                             @for object in folder {
                                 li {
-                                    (object)
+                                    a href={(WORKER_URL) "/obj/" (object.key())} {
+                                        "Download " (object.key())
+                                    }
                                 }
                             }
                         }
@@ -119,7 +146,10 @@ fn write_http_headers(mut headers: Headers, r2_metadata: HttpMetadata) -> Result
         headers.set("cache-control", &cache_control)?;
     }
     if let Some(cache_expiry) = r2_metadata.cache_expiry {
-        headers.set("cache-expiry", &format!("max-age={}", cache_expiry.as_millis()))?;
+        headers.set(
+            "cache-expiry",
+            &format!("max-age={}", cache_expiry.as_millis()),
+        )?;
     }
     Ok(headers)
 }
