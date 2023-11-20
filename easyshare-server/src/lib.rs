@@ -54,9 +54,10 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
             let mut headers = write_http_headers(headers, r2_headers)?;
             headers.set("etag", &object.http_etag())?;
 
-
-            Response::from_bytes(object.body().unwrap().bytes().await?)
-            .map(|req| req.with_headers(headers))
+            Ok(Response::from_stream(object.body().unwrap().stream()?)?
+            .with_headers(headers)
+            .with_status(200))
+            
         })
         .get_async("/share/:id", |_req, ctx| async move {
             let Some(id) = ctx.param("id") else {
