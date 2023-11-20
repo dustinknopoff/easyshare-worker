@@ -11,9 +11,8 @@ bucket_name = 'easyshare'
 preview_bucket_name = 'easyshare'
 
 [vars]
-WORKER_URL = "http://localhost:8787"
-EXPIRATION_TIME_HOURS = 24
-
-[env.production.vars]
 WORKER_URL = "https://easyshare.knopoff.dev"
 EXPIRATION_TIME_HOURS = 24
+
+[triggers]
+crons = ["*/30 * * * *"]
