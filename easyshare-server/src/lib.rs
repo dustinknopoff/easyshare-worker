@@ -56,11 +56,18 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                 };
             }
 
+            let url = format!("{worker_url}/share/{prefix}");
+
             Response::from_html(html!(
-                div {
-                    p { "Success!"}
-                    a href={(worker_url) "/share/" (prefix)} {
+                div id="success-response" {
+                    p { "Your files have been uploaded. Click the link below to view what you'll be sharing."}
+                    a href={(url)} {
                         "View Files"
+                    }
+                    p { "Or share the URL "
+                        a href={(url)} {
+                            (url) 
+                        }
                     }
                 }
             ).into_string())
@@ -115,8 +122,8 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                         ul {
                             @for object in folder {
                                 li {
-                                    a href={(worker_url) "/obj/" (object.key())} {
-                                        "Download " (object.key())
+                                    a download href={(worker_url) "/obj/" (object.key())} {
+                                        "Click to download " (object.key())
                                     }
                                 }
                             }
