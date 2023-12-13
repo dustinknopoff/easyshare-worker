@@ -1,3 +1,11 @@
 html {
     font-family: -sans-serif;
 }
+
+form #progress {
+    display: none;
+}
+
+form #progress.loading {
+    display: block;
+}
