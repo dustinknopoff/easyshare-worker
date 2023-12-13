@@ -24,6 +24,10 @@ pub fn styles() -> Markup {
                 display: block;
             }
 
+            #success-response {
+                text-align: center;
+            }
+
             .container {
                 display: flex;
                 min-width: 100dvw;
@@ -50,6 +54,9 @@ pub fn layout(page_title: &str, children: Markup) -> Markup {
                 (page_title)
             }
             meta name="viewport" content="width=device-width, initial-scale=1.0";
+            meta name="description" content="Share files for 24 hours";
+            meta name="og:description" content="Share files for 24 hours";
+            meta name="og:title" content="Easyshare";
             (styles())
             script src="https://unpkg.com/htmx.org@1.9.8" {}
         }

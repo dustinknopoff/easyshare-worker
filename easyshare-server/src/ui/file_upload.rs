@@ -5,7 +5,7 @@ pub fn form() -> Markup {
     html! {
         div class="container" {
             h1 { "Easyshare"}
-            form id="form" hx-encoding="multipart/form-data" hx-post="/upload" {
+            form id="form" hx-encoding="multipart/form-data" hx-post="/upload" swap="outerHTML" {
                 input type="file" multiple name="files" required;
                 button { "Upload" }
                 progress id="progress" value="0" max="100";
