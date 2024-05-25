@@ -95,7 +95,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                 .with_headers(headers)
                 .with_status(200))
         })
-        .get_async("/share/:id", |_req, ctx| async move {
+        .get_async("/share/:id", |req, ctx| async move {
             let Some(id) = ctx.param("id") else {
                 return Response::error("ID required", 404);
             };
@@ -110,7 +110,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                 .await?
                 .objects();
 
-            Response::from_html(
+            let html = Response::from_html(
                 layout::layout(
                     "EasyShare",
                     html!(
@@ -120,7 +120,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                             }
                         }
                         ul {
-                            @for object in folder {
+                            @for object in folder.iter() {
                                 li {
                                     a download href={(worker_url) "/obj/" (object.key())} {
                                         "Click to download " (object.key())
@@ -131,7 +131,15 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                     ),
                 )
                 .into_string(),
-            )
+            );
+
+            match req.headers().get("Accept") {
+                Ok(Some(accept_header)) if accept_header.contains("application/json") => {
+                    let response: Vec<String> = folder.iter().map(|object| format!("{worker_url}/obj/{}", object.key())).collect();
+                    Response::from_json(&response)
+                },
+                _ => html, 
+            }
         })
         .run(req, env)
         .await
