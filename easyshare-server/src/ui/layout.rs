@@ -14,6 +14,10 @@ pub fn styles() -> Markup {
                 html, body {
                     background: oklch(86.62% 0.064 239);
                 }
+
+                .card {
+                    background: oklch(81.16% 0.064 239);
+                }
             }
 
             form #progress {
@@ -41,6 +45,14 @@ pub fn styles() -> Markup {
                 list-style: none;
             }
 
+            .card {
+                border-radius: 4px;
+                max-width: 250px;
+                padding: 8px;
+                background: #9cc8e7;
+                margin: 0 auto;
+            }
+
         </style>"))
     }
 }
@@ -62,6 +74,19 @@ pub fn layout(page_title: &str, children: Markup) -> Markup {
         }
         body {
             (children)
+        }
+    }
+}
+
+pub fn shortcut() -> Markup {
+    html! {
+        div class="card" {
+            a href="https://www.icloud.com/shortcuts/a340b4b17fce40e68c75e31146758a5f" {
+                "Install shortcut to download all"
+            }
+            p {
+                "For macOS, iPad OS, and iOS only. Once installed, running this shortcut on an easyshare download link will save all the files to your photo library."
+            }
         }
     }
 }

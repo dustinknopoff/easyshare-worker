@@ -69,6 +69,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                             (url) 
                         }
                     }
+                    (layout::shortcut())
                 }
             ).into_string())
         })
@@ -128,6 +129,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
                                 }
                             }
                         }
+                        (layout::shortcut())
                     ),
                 )
                 .into_string(),
