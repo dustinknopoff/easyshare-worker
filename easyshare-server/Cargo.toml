@@ -11,10 +11,10 @@ wasm-opt = false
 crate-type = ["cdylib"]
 
 [dependencies]
-worker = "0.0.18"
+worker = "0.3.0"
 cfg-if = "1"
 anyhow = "1"
-maud = "0.25.0"
+maud = "0.26.0"
 tracing = "0.1"
 tracing-web = "0.1"
 tracing-subscriber = { version = "0.3", features=['time', 'json'] }
